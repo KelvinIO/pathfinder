@@ -86,3 +86,37 @@ def h(p1, p2):
     x1, y1 = p1
     x2, y2 = p2
     return abs(x1 - x2) + abs(y1 - y2)
+
+# Make the grid
+def makeGrid(rows, width):
+    grid = []
+    gap = width // rows # Use integer division to calculate width of tiles
+    
+    for i in range(rows):
+        grid.append([])
+        for j in range(rows):
+            tile = Node(i, j, gap, gap, rows)
+            grid[i].append(tile)
+ 
+    return grid
+
+def drawGridlines(window, rows, width):
+    gap = width // rows
+    
+    # Draw gridlines
+    for i in range(rows):
+        pygame.draw.line(window, RED, (0, i*gap), (width, i*gap))
+        for j in range(rows):
+            pygame.draw.line(window, RED, (j*gap, 0), (j*gap, width))
+
+def drawGrid(window, grid, rows, width):
+    window.fill(WHITE)
+
+    for row in grid:
+        for node in row:
+            node.draw(window)
+
+    drawGridlines(window, rows, width)
+    pygame.display.update()
+
+
