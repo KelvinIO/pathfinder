@@ -52,7 +52,7 @@ class Node:
     def reset(self):
         return self.color == WHITE
     
-    # Now we define methods to assign hte colors
+    # Now we define methods to assign/make the colors
     def makeClosed(self):
         self.color = RED
 
@@ -71,12 +71,18 @@ class Node:
     def makePath(self):
         self.color = WHITE  # change to more visible color later
 
-    # Draw the nodes on screen
+    # Define the methods to draw the nodes on screen
     def draw(self, window):
         pygame.draw.rect(window, self.color, (self.x, self.y, self.width, self.height))
 
     def updateNeighbors(self, grid):
         pass
 
-    def __lt__(self, other):
+    def __lt__(self, other):  # Less than operator for comparisons of tiles
         return False
+
+# Heuristic(h) for calculations of 2 points(p1 & p2)
+def h(p1, p2): 
+    x1, y1 = p1
+    x2, y2 = p2
+    return abs(x1 - x2) + abs(y1 - y2)
