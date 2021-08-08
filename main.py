@@ -3,7 +3,9 @@ import math
 from queue import PriorityQueue
 
 # Set the window to be 800 pixels by 800 pixels
-window = pygame.display.set_mode((800, 800))  
+WIDTH = 800
+HEIGHT = 800
+window = pygame.display.set_mode((WIDTH, HEIGHT))  
 
 # Display the window
 pygame.display.set_caption("Pathfinder")
@@ -119,4 +121,48 @@ def drawGrid(window, grid, rows, width):
     drawGridlines(window, rows, width)
     pygame.display.update()
 
+def getClickedPos(pos, rows, width):
+    gap = width // rows
+    x, y = pos
 
+    row = x // gap
+    col = y // gap
+
+    return row, col
+
+def main(window, width):
+    ROWS = 20
+    grid = makeGrid(ROWS, width)
+    
+    # Some helper variables to keep track of program state
+    startPos = None
+    endPos = None
+
+    run = True
+    started = False
+
+    while run:
+        for event in pygame.event.get():  # Loop through events and check them
+            if event.type == pygame.QUIT:
+                run = False
+            if started:
+                continue
+            if pygame.mouse.get_pressed()[0]: # Check for LMB press
+                pos = pygame.mouse.get_pos()
+                row, col = getClickedPos(pos, ROWS, width)
+                node = grid[row][col]
+                
+                if not start:
+                    start = node
+                    start.makeStart()
+                elif not end:
+                    end = node
+                    end.makeEnd()
+                elif node != start and node != end:
+                    node.makeBarrier
+
+            elif pygame.mouse.get_pressed()[2]: # RMB
+                pass
+    pygame.quit()
+
+main(window, WIDTH)
