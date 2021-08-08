@@ -135,13 +135,14 @@ def main(window, width):
     grid = makeGrid(ROWS, width)
     
     # Some helper variables to keep track of program state
-    startPos = None
-    endPos = None
+    start = None
+    end = None
 
     run = True
     started = False
 
     while run:
+        drawGrid(window, grid, ROWS, WIDTH)
         for event in pygame.event.get():  # Loop through events and check them
             if event.type == pygame.QUIT:
                 run = False
@@ -151,15 +152,15 @@ def main(window, width):
                 pos = pygame.mouse.get_pos()
                 row, col = getClickedPos(pos, ROWS, width)
                 node = grid[row][col]
-                
+
                 if not start:
                     start = node
                     start.makeStart()
                 elif not end:
                     end = node
                     end.makeEnd()
-                elif node != start and node != end:
-                    node.makeBarrier
+                elif node != end and node != start:
+                    node.makeBarrier()
 
             elif pygame.mouse.get_pressed()[2]: # RMB
                 pass
