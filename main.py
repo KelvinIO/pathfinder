@@ -52,7 +52,7 @@ class Node:
         return self.color == PURPLE
 
     def reset(self):
-        return self.color == WHITE
+        self.color = WHITE
     
     # Now we define methods to assign/make the colors
     def makeClosed(self):
@@ -78,12 +78,25 @@ class Node:
         pygame.draw.rect(window, self.color, (self.x, self.y, self.width, self.height))
 
     def updateNeighbors(self, grid):
-        pass
+        self.neighbors = [] # Create a list of neighbors
+        
+        # Check if we can check our neighbors below(for out of bounds errors) and check if the neighboring nodes are barriers
+        if self.row < self.totalRows - 1 and not grid[self.row + 1][self.col].nodeIsBarrier():  #DOWN
+            self.neighbors.append(grid[self.row + 1][self.col])
+        # Check if we have room above the current node
+        if self.row > 0 and not grid[self.row - 1][self.col].nodeIsBarrier():   #UP
+            self.neighbors.append(grid[self.row - 1][self.col])
+
+        if self.col > 0 and not grid[self.row][self.col - 1].nodeIsBarrier():  #LEFT
+            self.neighbors.append(grid[self.row][self.col - 1])
+
+        if self.col < self.totalRows - 1 and not grid[self.row][self.col + 1].nodeIsBarrier():  #RIGHT
+            self.neighbors.append(grid[self.row][self.col + 1])
 
     def __lt__(self, other):  # Less than operator for comparisons of tiles
         return False
 
-# Heuristic(h) for calculations of 2 points(p1 & p2)
+# Heuristic[h(n)] cost for calculations of 2 points(p1 & p2)
 def h(p1, p2): 
     x1, y1 = p1
     x2, y2 = p2
@@ -153,17 +166,36 @@ def main(window, width):
                 row, col = getClickedPos(pos, ROWS, width)
                 node = grid[row][col]
 
-                if not start:
+                if not start and node != end:
                     start = node
                     start.makeStart()
-                elif not end:
+                elif not end and node != start:
                     end = node
                     end.makeEnd()
                 elif node != end and node != start:
                     node.makeBarrier()
 
             elif pygame.mouse.get_pressed()[2]: # RMB
-                pass
+                pos = pygame.mouse.get_pos()
+                row, col = getClickedPos(pos, ROWS, width)
+                node = grid[row][col]
+                node.reset()
+
+                if node == start:
+                    start = None
+                elif node == end:
+                    end = None
+            # Configure keybindings
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    run = False
+                if event.key == pygame.K_SPACE and not started:
+                    for row in grid:
+                        for node in row:
+                            node.updateNeighbors()
+
+                    astar(lambda: drawGrid(window, grid, ROWS, width), grid, start, end)
+
     pygame.quit()
 
 main(window, WIDTH)
